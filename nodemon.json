@@ -1,0 +1,20 @@
+{
+    "restartable": "rs",
+    "verbose": false,
+    "watch": [
+        "index.js",
+        "app/*.js",
+        "app/controllers/*.js"
+    ],
+    "ext": "js",
+    "execMap": {
+        "": "grunt && node --harmony"
+    },
+    "events": {
+        "crash": "osascript -e 'display notification \"💥 App crashed\" with title \"App crash\"'",
+        "restart": "osascript -e 'display notification \"♻️ App restarted due to:\n'$(basename $FILENAME)'\" with title \"App restart\"'"
+    },
+    "delay": "10",
+    "legacyWatch": false,
+    "stdout": true
+}
