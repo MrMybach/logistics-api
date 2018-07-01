@@ -1,0 +1,18 @@
+html
+    head
+        title= 'All orders'
+    body
+        each order in orders
+            table
+                tr
+                    th= 'Truck ID'
+                    th= 'Truck load'
+
+                each truck in order
+                  tr
+                    td= truck
+                    td
+                        //- each load in truck.load
+                        //-     p= `Client ID: ${load.id},  Package weight: ${load.weight}`
+
+            //- p= order
