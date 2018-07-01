@@ -2,10 +2,14 @@ module.exports = {
     order: (app, req, res) => {
         const orders = req.body;
 
+        let response = {};
+
         if (!orders.length) {
-            return res.status(500).json({ error: 'NO_ORDERS' });
+            return res.status(400).json({ error: 'NO_ORDERS' });
         }
 
-        res.json({ proccessing: true });
+        response = app.services.order.handleOrder(orders);
+
+        res.json(response);
     }
 };

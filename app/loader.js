@@ -2,29 +2,35 @@ const
     config = require('./config.js'),
     fs = require('fs'),
     routes = require('./routes.js'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    filesLoader = (app, type) => {
+        fs.readdir(`./app/${type}`, (error, files) => {
+            app[type] = {};
+
+            if (error) {
+                throw new Error(error);
+            }
+
+            if (!files.length) {
+                throw new Error('NO_FILES_LOADED');
+            }
+
+            files.forEach((module) => {
+                const moduleToLoad = module.replace('.js', '');
+
+                app[type][moduleToLoad] = require(`./${type}/${moduleToLoad}`);
+            });
+
+            console.info(`${type} are loaded!`)
+        });
+    }
 
 module.exports = (app) => {
     return {
-        load: () => {
-            app.controllers = {};
+        load: async () => {
             app.config = config;
-
-            fs.readdir('./app/controllers', (error, files) => {
-                if (error) {
-                    throw new Error(error);
-                }
-
-                if (!files.length) {
-                    throw new Error('NO_CONTROLLER_FILES_LOADED');
-                }
-
-                files.forEach((module) => {
-                    const controller = module.replace('.js', '');
-
-                    app.controllers[controller] = require('./controllers/' + controller);
-                });
-            });
+            app.controllers = await filesLoader(app, 'controllers');
+            app.services = await filesLoader(app, 'services');
 
             app.use(bodyParser.json());
 
