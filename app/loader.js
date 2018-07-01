@@ -1,5 +1,7 @@
 const
     config = require('./config.js'),
+    express = require('express'),
+    path = require('path'),
     fs = require('fs'),
     routes = require('./routes.js'),
     bodyParser = require('body-parser'),
@@ -33,6 +35,8 @@ module.exports = (app) => {
             app.services = await filesLoader(app, 'services');
 
             app.use(bodyParser.json());
+            app.use('/public', express.static(path.join(__dirname, '../public')));
+            app.set('view engine', 'pug');
 
             routes(app);
 

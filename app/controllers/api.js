@@ -10,6 +10,8 @@ module.exports = {
 
         response = app.services.order.handleOrder(orders);
 
+        app.services.pdf.render(app, response);
+
         res.json(response);
     }
 };
