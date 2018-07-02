@@ -1,16 +1,27 @@
 html
     head
         title= title
-    body
-        h1= `Order price: ${response.price}`
 
-        table
-            tr
-                th= 'Truck ID'
-                th= 'Truck load'
-            each truck in response.trucks
-              tr
-                td= truck.truckID
-                td
-                    each load in truck.load
-                        p= `Client ID: ${load.id},  Package weight: ${load.weight}`
+        link(
+            rel='stylesheet'
+            href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'
+        )
+
+    body
+        div(class='container')
+            h1= `Order price: ${response.price}`
+
+            div(class='row')
+                table(
+                    class='table'
+                    style='max-width: 600px'
+                )
+                    tr
+                        th= 'Truck ID'
+                        th= 'Truck load'
+                    each truck in response.trucks
+                      tr
+                        td= truck.truckID
+                        td
+                            each load in truck.load
+                                p= `Client ID: ${load.id},  Package weight: ${load.weight}`

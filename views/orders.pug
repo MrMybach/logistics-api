@@ -1,18 +1,30 @@
 html
     head
         title= 'All orders'
+
+        link(
+            rel='stylesheet'
+            href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'
+        )
+
     body
-        each order in orders
-            table
-                tr
-                    th= 'Truck ID'
-                    th= 'Truck load'
+        div(class='container')
+            h1= 'All orders'
 
-                each truck in order
-                  tr
-                    td= truck
-                    td
-                        //- each load in truck.load
-                        //-     p= `Client ID: ${load.id},  Package weight: ${load.weight}`
+            div(class='row')
+                //- pre= otherOrders
 
-            //- p= order
+                table(class='table')
+                    tr
+                        th= 'Order No'
+                        th= 'Price'
+                        th= 'Order'
+
+                    each order, index in orders
+                        tr
+                            th= index + 1
+                            td= order.price
+                            td
+                                each loads in order.trucks
+                                    p= `Truck ID: ${loads.truckID} with ${loads.load.length} packages`
+

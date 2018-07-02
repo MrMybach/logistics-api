@@ -34,7 +34,7 @@ module.exports = {
                         return JSON.parse(order);
                     });
 
-                    res.render('orders', { orders: orders }, (error, html) => {
+                    res.render('orders', { orders: orders, otherOrders: util.inspect(orders, false, null) }, (error, html) => {
                         if (error) {
                             console.log(error);
 
