@@ -1,5 +1,6 @@
 const
     _ = require('lodash'),
+    cuid = require('cuid'),
     options = {
         priceLimit: 400,
         lightFactor: 10,
@@ -9,6 +10,11 @@ const
         maxPackageWeight: 500
     };
 
+/**
+ * Oblicza cenę zamówienia
+ * @param  {object} orders
+ * @return {integer}  cena zamówienia
+ */
 function calculatePrice(orders) {
     let ordersPrice = 0;
 
@@ -23,13 +29,18 @@ function calculatePrice(orders) {
     return ordersPrice / 1000;
 }
 
+/**
+ * Dzieli zamówienie na ładunki
+ * @param  {object} orders
+ * @return {object} zamówienia rozdystrybuowane na ładunki
+ */
 function distributeLoads(orders) {
     let sortedOrders = _.sortBy(orders, 'weight'),
         orderChunk = [],
         allChunks = [];
 
     for (let i = 0; i < sortedOrders.length; i++ ) {
-        const shouldPop = checkSum(orderChunk, sortedOrders[i]);
+        const shouldPop = isOverload(orderChunk, sortedOrders[i]);
 
         if (!shouldPop) {
             orderChunk.push(sortedOrders[i]);
@@ -48,13 +59,24 @@ function distributeLoads(orders) {
     return allChunks;
 }
 
-function checkSum(collection, nextItem) {
-    let currnetSum = collection.length !== 0 ? _.sumBy(collection, 'weight') : 0;
+/**
+ * Sprawdza czy ładunek osiągnął maksymalną ładowność ciężarówki
+ * @param  {object}  collection ładunki do transportu
+ * @param  {object}  nextItem   następny ładunek do sprawdzenia
+ * @return {Boolean}
+ */
+function isOverload(collection, nextItem) {
+    const currnetSum = _.sumBy(collection, 'weight') || 0;
 
     return (currnetSum + nextItem.weight) > options.maxTruckLoad;
 }
 
 module.exports = {
+    /**
+     * Buduje ustrukturyzowany obiekt zamówienia
+     * @param  {object} orders obiekt zamówienia
+     * @return {object}        ustrukturyzowany obiekt zamówienia z podziałem na transporty
+     */
     handleOrder: (orders) => {
         const
             price = calculatePrice(orders),
@@ -64,7 +86,7 @@ module.exports = {
             price: price,
             trucks: loads.map((load) => {
                 return {
-                    truckID: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+                    truckID: cuid(),
                     load: load
                 }
             })

@@ -3,6 +3,13 @@ const
     util = require('util');
 
 module.exports = {
+    /**
+     * Zapisuje zamówienie
+     * @param  {object} app instancja Express'a
+     * @param  {object} req obiekt request'u
+     * @param  {object} res obiekt response'a
+     * @return {object} json z zamówieniem
+     */
     order: (app, req, res) => {
         const
             redis = new Redis(app.config.redis),
@@ -24,30 +31,35 @@ module.exports = {
             }).catch(res.json);
     },
 
+    /**
+     * Zwraca wszystkie zamówienia
+     * @param  {object} app instancja Express'a
+     * @param  {object} req obiekt request'u
+     * @param  {object} res obiekt response'a
+     * @return {object} json z zamówieniem
+     */
     orders: (app, req, res) => {
         const redis = new Redis(app.config.redis);
 
         redis.smembers('orders')
-            .then((response) => {
+            .then((docs) => {
+                if (!docs.length) {
+                    return res.json({
+                        orders_count: 0,
+                        text: 'No orders'
+                    });
+                }
+
                 try {
-                    const orders = response.map((order) => {
+                    const orders = docs.map((order) => {
                         return JSON.parse(order);
                     });
 
-                    res.render('orders', { orders: orders, otherOrders: util.inspect(orders, false, null) }, (error, html) => {
-                        if (error) {
-                            console.log(error);
-
-                            return res.send(error);
-                        }
-
-                        res.send(html);
-                    });
-
+                    res.json(orders);
                 } catch (error) {
                     console.log(error);
 
-                    res.send('JSON_PARSE_ERROR');
+                    res.status(500).json({ error: 'JSON_PARSE_ERROR' });
                 }
             }).catch(res.send);
     }

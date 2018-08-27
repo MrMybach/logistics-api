@@ -29,25 +29,33 @@ const
 
 module.exports = (app) => {
     return {
+        /**
+         * Odpowiada m.in. za załadowanie kontrolerów i serwisów do aplikacji
+         * @return {undefined}
+         */
         load: async () => {
-            app.config = config;
-            app.controllers = await filesLoader(app, 'controllers');
-            app.services = await filesLoader(app, 'services');
+            try {
+                app.config = config;
+                app.controllers = await filesLoader(app, 'controllers');
+                app.services = await filesLoader(app, 'services');
 
-            app.use(bodyParser.json());
-            app.use('/public', express.static(path.join(__dirname, '../public')));
-            app.set('view engine', 'pug');
+                app.use(bodyParser.json());
+                app.use('/public', express.static(path.join(__dirname, '../public')));
+                app.set('view engine', 'pug');
 
-            routes(app);
+                routes(app);
 
-            console.log('');
-            console.log('<============================================>');
-            console.log('                                            ||');
-            console.log('    App loaded!                             ||');
-            console.log(`    Logistics API is running on port ${app.config.port}   ||`);
-            console.log('                                            ||');
-            console.log('<============================================>');
-            console.log('');
+                console.log('');
+                console.log('<============================================>');
+                console.log('                                            ||');
+                console.log('    App loaded! 👍                          ||');
+                console.log(`    Logistics API is running on port ${app.config.port}   ||`);
+                console.log('                                            ||');
+                console.log('<============================================>');
+                console.log('');
+            } catch(error) {
+                throw new Error('LAUNCHING_ERROR_🔥')
+            }
         }
     }
 };
